@@ -19,6 +19,7 @@ export class SubmissionRepository {
          file_mime_type AS "fileMimeType",
          file_size_bytes AS "fileSizeBytes",
          status,
+         reject_reason AS "rejectReason",
          created_at AS "createdAt",
          updated_at AS "updatedAt"
        FROM submissions
@@ -39,6 +40,7 @@ export class SubmissionRepository {
          file_mime_type AS "fileMimeType",
          file_size_bytes AS "fileSizeBytes",
          status,
+         reject_reason AS "rejectReason",
          created_at AS "createdAt",
          updated_at AS "updatedAt"
        FROM submissions
@@ -71,6 +73,7 @@ export class SubmissionRepository {
          file_mime_type AS "fileMimeType",
          file_size_bytes AS "fileSizeBytes",
          status,
+         reject_reason AS "rejectReason",
          created_at AS "createdAt",
          updated_at AS "updatedAt"`,
       [
@@ -121,6 +124,7 @@ export class SubmissionRepository {
         file_mime_type AS "fileMimeType",
         file_size_bytes AS "fileSizeBytes",
         status,
+        reject_reason AS "rejectReason",
         created_at AS "createdAt",
         updated_at AS "updatedAt"
     `;
@@ -144,9 +148,33 @@ export class SubmissionRepository {
          file_mime_type AS "fileMimeType",
          file_size_bytes AS "fileSizeBytes",
          status,
+         reject_reason AS "rejectReason",
          created_at AS "createdAt",
          updated_at AS "updatedAt"`,
       [status, id]
+    );
+    return result.rows[0] || null;
+  }
+
+  async updateStatusWithReason(id: number, status: SubmissionStatus, rejectReason: string): Promise<Submission | null> {
+    const result = await dbPool.query<Submission>(
+      `UPDATE submissions
+       SET status = $1, reject_reason = $2, updated_at = NOW()
+       WHERE id = $3
+       RETURNING
+         id,
+         user_id AS "userId",
+         title,
+         description,
+         file_original_name AS "fileOriginalName",
+         file_storage_path AS "fileStoragePath",
+         file_mime_type AS "fileMimeType",
+         file_size_bytes AS "fileSizeBytes",
+         status,
+         reject_reason AS "rejectReason",
+         created_at AS "createdAt",
+         updated_at AS "updatedAt"`,
+      [status, rejectReason, id]
     );
     return result.rows[0] || null;
   }

@@ -46,9 +46,10 @@ export class ProcessService {
       throw new AppError('Submission is not in PENDING status', 400);
     }
 
-    const updated = await this.submissionService.updateSubmissionStatus(
+    const updated = await this.submissionService.updateSubmissionStatusWithReason(
       submissionId,
-      'REJECTED'
+      'REJECTED',
+      reason
     );
 
     await this.notificationService.sendNotification(

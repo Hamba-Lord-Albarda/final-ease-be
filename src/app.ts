@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import path from 'path';
 import { requestLogger } from './core/middleware/requestLogger';
 import { errorHandler } from './core/middleware/errorHandler';
@@ -11,6 +12,10 @@ import { notificationRoutes } from './modules/notification/notification.routes';
 const app = express();
 
 // Global middlewares
+app.use(cors({
+  origin: process.env.FE_URL, // Frontend URL
+  credentials: true
+}));
 app.use(express.json());
 app.use(requestLogger);
 

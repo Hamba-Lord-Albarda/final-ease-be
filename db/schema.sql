@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS submissions (
   file_mime_type VARCHAR(100) NOT NULL DEFAULT 'application/pdf',
   file_size_bytes BIGINT NOT NULL,
   status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
+  reject_reason TEXT,
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );

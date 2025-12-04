@@ -46,6 +46,14 @@ export class SubmissionService {
     return updated;
   }
 
+  async updateSubmissionStatusWithReason(id: number, status: SubmissionStatus, rejectReason: string): Promise<Submission> {
+    const updated = await this.submissionRepository.updateStatusWithReason(id, status, rejectReason);
+    if (!updated) {
+      throw new AppError('Submission not found', 404);
+    }
+    return updated;
+  }
+
   async deleteSubmission(id: number): Promise<void> {
     const existing = await this.submissionRepository.findById(id);
     if (!existing) {

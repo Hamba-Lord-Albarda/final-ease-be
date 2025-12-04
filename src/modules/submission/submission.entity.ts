@@ -12,6 +12,7 @@ export interface Submission {
   fileSizeBytes: number;
 
   status: SubmissionStatus;
+  rejectReason?: string;
   createdAt: Date;
   updatedAt: Date;
 }
