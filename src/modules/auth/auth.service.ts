@@ -1,7 +1,10 @@
+import bcrypt from 'bcrypt';
 import { AppError } from '../../core/errors/AppError';
 import { AuthRepository } from './auth.repository';
 import { RegisterInput, LoginInput, User } from './auth.entity';
 import { signJwt } from '../../core/utils/jwt';
+
+const SALT_ROUNDS = 10;
 
 export class AuthService {
   private authRepository: AuthRepository;
@@ -16,14 +19,15 @@ export class AuthService {
       throw new AppError('Email is already registered', 400);
     }
 
-    const passwordHash = `hash(${payload.password})`;
+    const passwordHash = await bcrypt.hash(payload.password, SALT_ROUNDS);
     const role = payload.role ?? 'MAHASISWA';
 
     const user = await this.authRepository.createUser(
       payload.name,
       payload.email,
       passwordHash,
-      role
+      role,
+      payload.phoneNumber
     );
 
     const token = signJwt({
@@ -41,8 +45,8 @@ export class AuthService {
       throw new AppError('Invalid email or password', 401);
     }
 
-    const expectedHash = `hash(${payload.password})`;
-    if (user.passwordHash !== expectedHash) {
+    const isPasswordValid = await bcrypt.compare(payload.password, user.passwordHash);
+    if (!isPasswordValid) {
       throw new AppError('Invalid email or password', 401);
     }
 
