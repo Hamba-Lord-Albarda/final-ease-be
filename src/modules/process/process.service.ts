@@ -27,10 +27,7 @@ export class ProcessService {
       'APPROVED'
     );
 
-    await this.notificationService.sendNotification(
-      submission.userId,
-      `Your submission "${updated.title}" has been approved by user ${approverId}`
-    );
+    await this.notificationService.notifyApproval(submission.userId, updated.title);
 
     return updated;
   }
@@ -52,10 +49,7 @@ export class ProcessService {
       reason
     );
 
-    await this.notificationService.sendNotification(
-      submission.userId,
-      `Your submission "${updated.title}" was rejected by user ${approverId}. Reason: ${reason}`
-    );
+    await this.notificationService.notifyRejection(submission.userId, updated.title, reason);
 
     return updated;
   }

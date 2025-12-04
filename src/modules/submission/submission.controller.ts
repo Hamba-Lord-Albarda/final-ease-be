@@ -1,12 +1,18 @@
 import { Request, Response, NextFunction } from 'express';
 import { SubmissionService } from './submission.service';
+import { NotificationService } from '../notification/notification.service';
 import { AppError } from '../../core/errors/AppError';
 
 export class SubmissionController {
   private submissionService: SubmissionService;
+  private notificationService: NotificationService;
 
-  constructor(submissionService?: SubmissionService) {
+  constructor(
+    submissionService?: SubmissionService,
+    notificationService?: NotificationService
+  ) {
     this.submissionService = submissionService ?? new SubmissionService();
+    this.notificationService = notificationService ?? new NotificationService();
   }
 
   getAll = async (req: Request, res: Response, next: NextFunction) => {
@@ -41,6 +47,7 @@ export class SubmissionController {
       }
 
       const userId = auth.sub as number;
+      const userName = auth.name || 'Mahasiswa';
       const title = req.body.title;
       const description = req.body.description;
 
@@ -55,6 +62,8 @@ export class SubmissionController {
           size: file.size
         }
       });
+
+      await this.notificationService.notifyNewSubmissionToDosen(userName, title);
 
       res.status(201).json({ success: true, data: submission });
     } catch (err) {
