@@ -42,11 +42,11 @@ services:
       JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
       FONNTE_API_KEY: ${FONNTE_API_KEY:-}
       FE_URL: ${FE_URL:-https://finalease.vercel.app}
-    volumes:
-      - uploads_data:/app/uploads
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:-}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:-}
     ports:
       - "3000:3000"
 
 volumes:
   postgres_data:
-  uploads_data:

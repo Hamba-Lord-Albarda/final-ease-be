@@ -36,7 +36,7 @@ export class SubmissionController {
 
   create = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const file = req.file;
+      const file = req.file as Express.Multer.File & { path?: string; secure_url?: string };
       if (!file) {
         throw new AppError('PDF file is required', 400);
       }
@@ -51,15 +51,18 @@ export class SubmissionController {
       const title = req.body.title;
       const description = req.body.description;
 
+      // Cloudinary returns the URL in file.path (multer-storage-cloudinary)
+      const cloudinaryUrl = (file as any).path || (file as any).secure_url;
+
       const submission = await this.submissionService.createSubmission({
         userId,
         title,
         description,
         file: {
           originalName: file.originalname,
-          storagePath: file.path,
-          mimeType: file.mimetype,
-          size: file.size
+          storagePath: cloudinaryUrl, // Now stores Cloudinary URL
+          mimeType: file.mimetype || 'application/pdf',
+          size: file.size || 0
         }
       });
 
